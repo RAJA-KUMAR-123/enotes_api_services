@@ -3,10 +3,12 @@ package com.enote.service.impl;
 import java.util.Date;
 import java.util.List;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
+import com.enote.dto.CategoryResponse;
 import com.enote.model.Category;
 import com.enote.repository.CategoryRepository;
 import com.enote.service.CategoryService;
@@ -17,6 +19,10 @@ public class CategoryServiceImpl implements CategoryService{
 
 	@Autowired 
 	private CategoryRepository categoryRepo;
+	
+	@Autowired
+	private ModelMapper mapper;
+	
 	
 //	@Override
 //	public boolean saveCategory(Category category) {
@@ -50,4 +56,14 @@ public class CategoryServiceImpl implements CategoryService{
 		List<Category> getAllCategory=categoryRepo.findAll();
 		return getAllCategory;
 	}
+
+
+	@Override
+	public List<CategoryResponse> getActiveCategory() {
+		List<Category> categories = categoryRepo.findByIsActiveTrue();
+
+		List<CategoryResponse> categoriesList = categories.stream().map(cat->mapper.map(cat, CategoryResponse.class)).toList();
+		return categoriesList;
+	}
+	
 }

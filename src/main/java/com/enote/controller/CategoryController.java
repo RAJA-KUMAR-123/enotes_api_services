@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.enote.dto.CategoryResponse;
 import com.enote.model.Category;
 import com.enote.service.CategoryService;
 
@@ -39,6 +40,20 @@ public class CategoryController {
 //		String name =null;
 //		name.toUpperCase();
 		 List<Category> getAllCategory = categoryService.getAllCategory();
+		 if(CollectionUtils.isEmpty(getAllCategory)) {
+			 return ResponseEntity.noContent().build();
+		 }
+//		 return CommonUtil.createResponseBuilder(getAllCategory, HttpStatus.OK);
+		 return new ResponseEntity<>(getAllCategory, HttpStatus.OK);
+	 }
+	
+	
+	@GetMapping("/getActiveCategory")
+	 public ResponseEntity<?> getActiveCategory(){
+//		String name =null;
+//		name.toUpperCase();
+		 List<CategoryResponse> getAllCategory = categoryService.getActiveCategory();
+		 System.out.println(getAllCategory);
 		 if(CollectionUtils.isEmpty(getAllCategory)) {
 			 return ResponseEntity.noContent().build();
 		 }
