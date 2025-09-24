@@ -53,7 +53,7 @@ public class CategoryController {
 //		String name =null;
 //		name.toUpperCase();
 		 List<CategoryResponse> getAllCategory = categoryService.getActiveCategory();
-		 System.out.println(getAllCategory);
+		
 		 if(CollectionUtils.isEmpty(getAllCategory)) {
 			 return ResponseEntity.noContent().build();
 		 }
