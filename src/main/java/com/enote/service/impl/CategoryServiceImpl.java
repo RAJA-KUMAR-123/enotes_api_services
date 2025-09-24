@@ -8,7 +8,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
-
 import com.enote.dto.CategoryDto;
 import com.enote.dto.CategoryResponse;
 import com.enote.model.Category;
@@ -77,4 +76,14 @@ public class CategoryServiceImpl implements CategoryService{
 		List<CategoryResponse> categoriesList = categories.stream().map(cat->mapper.map(cat, CategoryResponse.class)).toList();
 		return categoriesList;
 	}
+
+
+	@Override
+	public List<CategoryResponse> getActiveCategory() {
+		List<Category> categories = categoryRepo.findByIsActiveTrue();
+
+		List<CategoryResponse> categoriesList = categories.stream().map(cat->mapper.map(cat, CategoryResponse.class)).toList();
+		return categoriesList;
+	}
+	
 }
