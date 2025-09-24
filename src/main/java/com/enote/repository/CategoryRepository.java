@@ -17,6 +17,8 @@ public interface CategoryRepository extends JpaRepository<Category, Integer>{
 
 	Boolean existsByName(String trim);
 
+	List<Category> findByIsActiveTrue();
+
 
 
 }
