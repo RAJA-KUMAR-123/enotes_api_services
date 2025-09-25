@@ -2,6 +2,7 @@ package com.enote.service.impl;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import org.modelmapper.ModelMapper;
@@ -79,11 +80,30 @@ public class CategoryServiceImpl implements CategoryService{
 
 
 	@Override
-	public List<CategoryResponse> getActiveCategory() {
-		List<Category> categories = categoryRepo.findByIsActiveTrue();
-
-		List<CategoryResponse> categoriesList = categories.stream().map(cat->mapper.map(cat, CategoryResponse.class)).toList();
-		return categoriesList;
+	public CategoryDto getCategoryByid(Integer id) {
+		
+		Optional<Category> findBycategory = categoryRepo.findById(id);
+		if(findBycategory.isPresent()) {
+			Category category = findBycategory.get();
+			return mapper.map(category, CategoryDto.class);
+		}
+		return null;
 	}
+
+
+	@Override
+	public Boolean deletedById(Integer id) {
+		Optional<Category> findBycategory = categoryRepo.findById(id);
+		if(findBycategory.isPresent()) {
+			Category category = findBycategory.get();
+			category.setIsDeleted(true);
+			categoryRepo.save(category);
+			return true;
+		}
+		return false;
+	}
+
+
+	
 	
 }
