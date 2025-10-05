@@ -3,14 +3,16 @@ package com.enote.service.impl;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
+import org.springframework.web.bind.annotation.PathVariable;
+
 import com.enote.dto.CategoryDto;
 import com.enote.dto.CategoryResponse;
+import com.enote.exception.ResourceNotFoundException;
 import com.enote.model.Category;
 import com.enote.repository.CategoryRepository;
 import com.enote.service.CategoryService;
@@ -72,12 +74,6 @@ public class CategoryServiceImpl implements CategoryService{
 	}
 
 
-//	@Override
-//	public List<Category> getAllCategory() {
-//		// TODO Auto-generated method stub
-//		return null;
-//	}
-
 	
 	@Override
 	public List<CategoryDto> getAllCategory() {
@@ -99,13 +95,15 @@ public class CategoryServiceImpl implements CategoryService{
 
 
 	@Override
-	public CategoryDto getCategoryByid(Integer id) {
+	public CategoryDto getCategoryByid(Integer id) throws Exception {
 		
-		Optional<Category> findBycategory = categoryRepo.findById(id);
-		if(findBycategory.isPresent()) {
-			Category category = findBycategory.get();
-			return mapper.map(category, CategoryDto.class);
+		Category findBycategory = categoryRepo.findByIdAndIsDeletedFalse(id)
+				.orElseThrow(()->new ResourceNotFoundException("Category not found for the below mentioned id = " +id));
+		
+		if(!ObjectUtils.isEmpty(findBycategory)) {
+			return mapper.map(findBycategory, CategoryDto.class);
 		}
+
 		return null;
 	}
 
