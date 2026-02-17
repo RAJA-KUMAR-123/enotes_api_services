@@ -6,7 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -55,6 +58,7 @@ public class CategoryController {
 //		String name =null;
 //		name.toUpperCase();
 		 List<CategoryResponse> getAllCategory = categoryService.getActiveCategory();
+
 		 System.out.println(getAllCategory);
 		 if(CollectionUtils.isEmpty(getAllCategory)) {
 			 return ResponseEntity.noContent().build();
@@ -62,4 +66,43 @@ public class CategoryController {
 //		 return CommonUtil.createResponseBuilder(getAllCategory, HttpStatus.OK);
 		 return new ResponseEntity<>(getAllCategory, HttpStatus.OK);
 	 }
+	
+	@GetMapping("/{id}")
+	public ResponseEntity<?> getCategoryid(@PathVariable Integer id) throws Exception{  
+		CategoryDto categoryDto=categoryService.getCategoryByid(id);
+		   if(ObjectUtils.isEmpty(categoryDto)) {
+				 return new ResponseEntity<>("This id "+ id +" is not found",HttpStatus.NOT_FOUND);
+			 }
+//		   return CommonUtil.createResponseErrorMessage(categoryDto, HttpStatus.OK);
+			 return new ResponseEntity<>(categoryDto, HttpStatus.OK);
+//		try {
+//			CategoryDto categoryDto=categoryService.getCategoryByid(id);
+//			   if(ObjectUtils.isEmpty(categoryDto)) {
+//					 return new ResponseEntity<>("This "+ id +" is not found",HttpStatus.NOT_FOUND);
+//				 }
+//				 return new ResponseEntity<>(categoryDto, HttpStatus.OK);
+//		}
+//		catch(ResourceNotFound e) {
+//			log.error("Controller :: getCategoryById ::  "+e.getMessage());
+//			return new ResponseEntity<>(e.getMessage(),HttpStatus.NOT_FOUND);
+//		}
+//		catch(Exception e) {
+//			return new ResponseEntity<>(e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
+//		}
+	}
+	
+	@DeleteMapping("/{id}")
+	public ResponseEntity<?> deleteById(@PathVariable Integer id){
+		Boolean  categoryDto = categoryService.deletedById(id);
+		if(categoryDto) {
+//			return CommonUtil.createResponseErrorMessage("Delete data successfully from your Database", HttpStatus.OK);
+			 return new ResponseEntity<>("Delete data successfully from your Database", HttpStatus.OK);
+		}
+//		return CommonUtil.createResponseErrorMessage("This "+ id +" is not deleted",HttpStatus.INTERNAL_SERVER_ERROR);
+		return new ResponseEntity<>("This "+ id +" is not deleted",HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+	
+	
+	
+	
 }

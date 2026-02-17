@@ -2,13 +2,13 @@ package com.enote.service.impl;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
-
 import com.enote.dto.CategoryDto;
 import com.enote.dto.CategoryResponse;
 import com.enote.model.Category;
@@ -42,9 +42,15 @@ public class CategoryServiceImpl implements CategoryService{
 		
 		Category category = mapper.map(categoryDto, Category.class);
 		
-		category.setIsDeleted(false);
-		category.setCreatedBy(1);
-		category.setCreatedOn(new Date());
+		
+		if(ObjectUtils.isEmpty(category.getId())) {
+			category.setIsDeleted(false);
+			category.setCreatedBy(1);
+			category.setCreatedOn(new Date());
+		}else {
+			updateCategory(category);
+		}
+
 		Category saveCategory =  categoryRepo.save(category);
 		if(ObjectUtils.isEmpty(saveCategory) && saveCategory == null) {
 			return false;
@@ -53,6 +59,19 @@ public class CategoryServiceImpl implements CategoryService{
 	}
 	
 	
+	
+	private void updateCategory(Category category) {
+		Optional<Category> findById = categoryRepo.findById(category.getId());
+		
+		if(findById.isPresent()) {
+			Category exitCategory = findById.get();
+			category.setCreatedBy(exitCategory.getCreatedBy());
+			category.setCreatedOn(exitCategory.getCreatedOn());
+			category.setIsDeleted(exitCategory.getIsDeleted());
+		}
+	}
+
+
 //	@Override
 //	public List<Category> getAllCategory() {
 //		// TODO Auto-generated method stub
@@ -77,4 +96,33 @@ public class CategoryServiceImpl implements CategoryService{
 		List<CategoryResponse> categoriesList = categories.stream().map(cat->mapper.map(cat, CategoryResponse.class)).toList();
 		return categoriesList;
 	}
+
+
+	@Override
+	public CategoryDto getCategoryByid(Integer id) {
+		
+		Optional<Category> findBycategory = categoryRepo.findById(id);
+		if(findBycategory.isPresent()) {
+			Category category = findBycategory.get();
+			return mapper.map(category, CategoryDto.class);
+		}
+		return null;
+	}
+
+
+	@Override
+	public Boolean deletedById(Integer id) {
+		Optional<Category> findBycategory = categoryRepo.findById(id);
+		if(findBycategory.isPresent()) {
+			Category category = findBycategory.get();
+			category.setIsDeleted(true);
+			categoryRepo.save(category);
+			return true;
+		}
+		return false;
+	}
+
+
+	
+	
 }
